@@ -22,7 +22,7 @@ import {
   getMedications, 
   saveMedication, 
   getMedicationLogs, 
-  addMedicationLog,
+  saveMedicationLog,
   updateElderStatus,
 } from '@/utils/storage';
 import { requestCameraPermissions } from '@/utils/permissions';
@@ -45,9 +45,7 @@ export default function MedicationScreen() {
     loadData();
     
     // Update the elder's status
-    updateElderStatus({
-      lastSeen: Date.now(),
-    });
+    updateElderStatus();
   }, []);
 
   const loadData = async () => {
@@ -77,6 +75,8 @@ export default function MedicationScreen() {
       ],
       imageUri,
       notes,
+      startDate: 0,
+      isActive: false
     };
 
     // Save medication
@@ -110,17 +110,13 @@ export default function MedicationScreen() {
       status: 'taken',
       timestamp: Date.now(),
       scheduledTime: medication.schedule[0].time,
+      taken: false
     };
     
-    await addMedicationLog(log);
+    await saveMedicationLog(log);
     
     // Update elder status
-    await updateElderStatus({
-      lastMedicationTaken: {
-        name: medication.name,
-        timestamp: Date.now(),
-      },
-    });
+    await updateElderStatus();
     
     // Refresh data
     await loadData();
@@ -137,9 +133,10 @@ export default function MedicationScreen() {
       status: 'missed',
       timestamp: Date.now(),
       scheduledTime: medication.schedule[0].time,
+      taken: false
     };
     
-    await addMedicationLog(log);
+    await saveMedicationLog(log);
     
     // Refresh data
     await loadData();

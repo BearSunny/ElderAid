@@ -1,3 +1,4 @@
+/*
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
@@ -18,7 +19,7 @@ import Colors from '@/constants/Colors';
 import Spacing from '@/constants/Spacing';
 import { FontSizes } from '@/constants/Fonts';
 import { Memory } from '@/types';
-import { getMemories, addMemory, deleteMemory, updateElderStatus } from '@/utils/storage';
+import { updateElderStatus } from '@/utils/storage';
 import { requestCameraPermissions, requestMediaLibraryPermissions } from '@/utils/permissions';
 
 export default function MemoriesScreen() {
@@ -33,7 +34,7 @@ export default function MemoriesScreen() {
   const [caption, setCaption] = useState('');
 
   useEffect(() => {
-    loadMemories();
+    //loadMemories();
     
     // Update the elder's status
     updateElderStatus({
@@ -62,7 +63,7 @@ export default function MemoriesScreen() {
     });
 
     if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
+      //setImageUri(result.assets[0].uri);
     }
   };
 
@@ -82,7 +83,7 @@ export default function MemoriesScreen() {
     });
 
     if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
+      //setImageUri(result.assets[0].uri);
     }
   };
 
@@ -138,9 +139,9 @@ export default function MemoriesScreen() {
         {
           text: 'Delete',
           onPress: async () => {
-            await deleteMemory(memoryId);
-            await loadMemories();
-            setViewModalVisible(false);
+            //await deleteMemory(memoryId);
+            //await loadMemories();
+            //setViewModalVisible(false);
           },
           style: 'destructive',
         },
@@ -167,6 +168,7 @@ export default function MemoriesScreen() {
       );
     }
   };
+
 
   return (
     <View style={styles.container}>
@@ -219,7 +221,8 @@ export default function MemoriesScreen() {
         />
       )}
 
-      {/* Add Memory Modal */}
+      {/* Add Memory Modal */
+      /*
       <Modal
         visible={addModalVisible}
         animationType="slide"
@@ -301,7 +304,8 @@ export default function MemoriesScreen() {
         </View>
       </Modal>
 
-      {/* View Memory Modal */}
+      {/* View Memory Modal */
+      /*
       {memories.length > 0 && (
         <Modal
           visible={viewModalVisible}
@@ -526,3 +530,4 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.xs,
   },
 });
+*/

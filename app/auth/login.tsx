@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Mail, Lock, ArrowRight } from 'lucide-react-native';
 import Text from '@/components/typography/Text';
 import Button from '@/components/Button';
 import Colors from '@/constants/Colors';
 import Spacing from '@/constants/Spacing';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/utils/firebaseConfig';
+import { router } from 'expo-router';
 
 export default function LoginScreen() {
-  const router = useRouter();
+  //const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    // Implement login logic here
-    router.push('/(tabs)');
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.replace('/(tabs)');
+    } catch (error: any) {
+      Alert.alert("Login Error", error.message);
+    }
   };
 
   return (
@@ -75,7 +82,7 @@ export default function LoginScreen() {
           </Text>
           <TouchableOpacity onPress={() => router.push('/auth/signup')}>
             <Text variant="body" color={Colors.primary[600]} style={styles.signupText}>
-              Sign Up
+              New here? Sign Up
             </Text>
           </TouchableOpacity>
         </View>

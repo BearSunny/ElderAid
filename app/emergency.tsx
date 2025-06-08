@@ -36,9 +36,7 @@ export default function EmergencyScreen() {
     getCurrentLocation();
     
     // Update elder status
-    updateElderStatus({
-      lastSeen: Date.now(),
-    });
+    updateElderStatus();
   }, []);
 
   const loadContacts = async () => {
@@ -79,9 +77,7 @@ export default function EmergencyScreen() {
       setLocation(locationData);
       
       // Update elder status with location
-      await updateElderStatus({
-        lastLocation: locationData,
-      });
+      await updateElderStatus();
       
     } catch (error) {
       console.log('Error getting location:', error);

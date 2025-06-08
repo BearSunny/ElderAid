@@ -37,7 +37,7 @@ export default function ChatBubble({ message, onImagePress }: ChatBubbleProps) {
           style={styles.messageText}
           color={isUserMessage ? Colors.white : Colors.gray[800]}
         >
-          {message.text}
+          {message.message}
         </Text>
         
         {message.hasMedia && message.mediaUri && message.mediaType === 'image' && (

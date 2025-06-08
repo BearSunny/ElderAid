@@ -1,122 +1,88 @@
-import { Platform } from 'react-native';
-import * as Speech from 'expo-speech';
-import { ChatMessage, Memory } from '@/types';
-import { getMemories } from './storage';
+import { ChatMessage } from '@/types';
+import { addChatMessage } from './storage';
 
-// Simple patterns for the MVP chatbot
-const MEMORY_PATTERNS = [
-  /show me (a )?memory/i,
-  /show me (a )?photo/i,
-  /show me (a )?picture/i,
-  /view memory/i,
-  /remember/i,
-  /photo/i,
-];
+// 🔐 Store this in a secure .env file in production
+const OPENROUTER_API_KEY = process.env.EXPO_PUBLIC_OPENROUTER_API_KEY; // Replace with your actual key
+const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
 
-const HELP_PATTERNS = [
-  /help me/i,
-  /i need help/i,
-  /emergency/i,
-  /call for help/i,
-  /call family/i,
-];
+// You can change the model to another free one from https://openrouter.ai/docs#models
+const MODEL = 'mistralai/mistral-7b-instruct:free'; // or try 'meta-llama/llama-3-8b-instruct'
 
-const MEDICATION_PATTERNS = [
-  /medication/i,
-  /medicine/i,
-  /pill/i,
-  /drug/i,
-  /dose/i,
-];
+/**
+ * Generates a bot response using OpenRouter's free LLM API
+ */
+export async function generateBotResponse(userInput: string, history: ChatMessage[]): Promise<ChatMessage> {
+  try {
+    const messages = [
+      {
+        role: 'system',
+        content: "You are ElderAid, a kind and helpful assistant for elderly users. Respond in a warm, clear, and friendly tone. Keep your replies concise and easy to understand.",
+      },
+      ...history.map((msg) => ({
+        role: msg.sender === 'bot' ? 'assistant' : 'user',
+        content: msg.message,
+      })),
+      {
+        role: 'user',
+        content: userInput,
+      },
+    ];
 
-interface BotResponse {
-  text: string;
-  hasMedia?: boolean;
-  mediaUri?: string;
-  mediaType?: 'image' | 'audio';
-  action?: 'emergency' | 'medication' | 'memory';
+    const response = await fetch(OPENROUTER_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages,
+      }),
+    });
+
+    const data = await response.json();
+
+    const content = data?.choices?.[0]?.message?.content?.trim();
+
+    const botMessage: ChatMessage = {
+      id: Date.now().toString(),
+      action: undefined, // this requires a complicated process so that the  bot can send to the app, such as triggering an emergency call, opening a medication reminder, etc
+      message: content || 'I’m sorry, I didn’t quite catch that. Could you please repeat?',
+      sender: 'bot',
+      timestamp: Date.now(),
+    };
+
+    await addChatMessage(botMessage);
+    return botMessage;
+  } catch (error) {
+    console.error('Error generating AI response:', error);
+
+    const fallbackMessage: ChatMessage = {
+      id: Date.now().toString(),
+      message: 'Oops! I had trouble answering that. Please try again in a few moments.',
+      sender: 'bot',
+      timestamp: Date.now(),
+      action: undefined
+    };
+
+    await addChatMessage(fallbackMessage);
+    return fallbackMessage;
+  }
 }
 
-// Simple rule-based response generation
-export const generateBotResponse = async (
-  userMessage: string,
-  chatHistory: ChatMessage[]
-): Promise<BotResponse> => {
-  // Detect if the user is asking to see memories
-  if (MEMORY_PATTERNS.some(pattern => pattern.test(userMessage))) {
-    const memories = await getMemories();
-    if (memories.length > 0) {
-      // Select a random memory to show
-      const randomMemory = memories[Math.floor(Math.random() * memories.length)];
-      return {
-        text: `Here's a memory I found: ${randomMemory.caption}`,
-        hasMedia: true,
-        mediaUri: randomMemory.imageUri,
-        mediaType: 'image',
-        action: 'memory',
-      };
-    } else {
-      return {
-        text: "I don't have any memories saved yet. Would you like to add some photos to your Memory Lane?",
-      };
-    }
-  }
+/**
+ * Optionally, this can be used to speak text using native TTS
+ */
+export function speakText(text: string) {
+  // You could use expo-speech here or another TTS lib
+  // Example: Speech.speak(text);
+  console.log('[TTS]', text);
+}
 
-  // Detect if the user is asking for help
-  if (HELP_PATTERNS.some(pattern => pattern.test(userMessage))) {
-    return {
-      text: "I can help you contact someone. Would you like me to call emergency services or your primary contact?",
-      action: 'emergency',
-    };
-  }
-
-  // Detect if the user is asking about medications
-  if (MEDICATION_PATTERNS.some(pattern => pattern.test(userMessage))) {
-    return {
-      text: "Let me show you your medication schedule. Would you like to see your medications?",
-      action: 'medication',
-    };
-  }
-
-  // Default responses
-  const defaultResponses = [
-    "I'm here to help you. You can ask me to show memories, remind you about medication, or call for help if you need it.",
-    "How are you feeling today? Is there anything specific you'd like help with?",
-    "I'm your ElderAid assistant. I can help with medications, memories, or emergencies.",
-    "Would you like to see some family photos or check your medication schedule?",
-  ];
-  
-  return {
-    text: defaultResponses[Math.floor(Math.random() * defaultResponses.length)],
-  };
-};
-
-// Text-to-speech helper
-export const speakText = async (text: string): Promise<void> => {
-  if (Platform.OS === 'web') {
-    console.log('Speech not fully supported on web');
-    // Web browsers have their own speech synthesis
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.speak(utterance);
-    }
-    return;
-  }
-  
-  await Speech.speak(text, {
-    language: 'en',
-    pitch: 1.0,
-    rate: 0.9,
-  });
-};
-
-export const stopSpeaking = () => {
-  if (Platform.OS === 'web') {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
-    return;
-  }
-  
-  Speech.stop();
-};
+/**
+ * Stops speaking (if TTS is active)
+ */
+export function stopSpeaking() {
+  // Example: Speech.stop();
+  console.log('[TTS stopped]');
+}

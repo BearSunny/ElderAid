@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Home, MessageSquare, PillIcon, Album } from 'lucide-react-native';
+import { Home, MessageSquare, PillIcon, Album, Users, Settings } from 'lucide-react-native';
 import Colors from '@/constants/Colors';
 import { FontSizes } from '@/constants/Fonts';
 
@@ -48,6 +48,24 @@ export default function TabLayout() {
           title: 'Medication',
           tabBarIcon: ({ color, size }) => (
             <PillIcon size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="family/index"
+        options={{
+          title: 'Dashboard',
+          tabBarIcon: ({ color, size }) => (
+            <Users size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="family/settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color, size }) => (
+            <Settings size={size} color={color} />
           ),
         }}
       />

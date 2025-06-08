@@ -10,6 +10,7 @@ import Colors from '@/constants/Colors';
 import Spacing from '@/constants/Spacing';
 import { getMedications, getMedicationLogs, getElderStatus } from '@/utils/storage';
 import { Medication, MedicationLog, ElderStatus } from '@/types';
+import ProfileMenu from '@/components/ProfileMenu';
 
 export default function FamilyDashboard() {
   const router = useRouter();
@@ -119,10 +120,11 @@ export default function FamilyDashboard() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.settingsButton}
-            onPress={() => router.push('/family/settings')}
+            onPress={() => router.push('/family/settings')} 
           >
             <Settings size={24} color={Colors.gray[700]} />
           </TouchableOpacity>
+          <ProfileMenu />
         </View>
       </View>
 

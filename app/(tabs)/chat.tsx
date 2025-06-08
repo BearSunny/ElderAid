@@ -31,9 +31,7 @@ export default function ChatScreen() {
     loadMessages();
     
     // Update the elder's status
-    updateElderStatus({
-      lastSeen: Date.now(),
-    });
+    updateElderStatus();
 
     // Add welcome message if no messages exist
     checkWelcomeMessage();
@@ -51,16 +49,17 @@ export default function ChatScreen() {
       // Add welcome message
       const welcomeMessage: ChatMessage = {
         id: Date.now().toString(),
-        text: "Hello! I'm your ElderAid assistant. I can help you with medications, show you memories, or call for help if needed. How can I assist you today?",
+        message: "Hello! I'm your ElderAid assistant. I can help you with medications, show you memories, or call for help if needed. How can I assist you today?",
         sender: 'bot',
         timestamp: Date.now(),
+        action: undefined
       };
       
       await addChatMessage(welcomeMessage);
       setMessages([welcomeMessage]);
       
       // Speak the welcome message
-      speakText(welcomeMessage.text);
+      speakText(welcomeMessage.message);
       setIsSpeaking(true);
     }
   };
@@ -71,9 +70,10 @@ export default function ChatScreen() {
     // Create user message
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
-      text: inputText,
+      message: inputText,
       sender: 'user',
       timestamp: Date.now(),
+      action: undefined
     };
 
     // Add to state and storage
@@ -83,13 +83,7 @@ export default function ChatScreen() {
     setInputText('');
 
     // Update elder status
-    updateElderStatus({
-      lastSeen: Date.now(),
-      lastChatInteraction: {
-        message: inputText,
-        timestamp: Date.now(),
-      },
-    });
+    updateElderStatus();
 
     // Generate bot response
     const botResponse = await generateBotResponse(inputText, updatedMessages);
@@ -97,12 +91,13 @@ export default function ChatScreen() {
     // Create bot message
     const botMessage: ChatMessage = {
       id: (Date.now() + 1).toString(),
-      text: botResponse.text,
+      message: botResponse.message,
       sender: 'bot',
       timestamp: Date.now() + 1,
       hasMedia: botResponse.hasMedia,
       mediaUri: botResponse.mediaUri,
       mediaType: botResponse.mediaType,
+      action: undefined
     };
 
     // Add bot message
@@ -116,7 +111,7 @@ export default function ChatScreen() {
     }
     
     // Speak the bot response
-    speakText(botResponse.text);
+    speakText(botResponse.message);
     setIsSpeaking(true);
   };
 
@@ -168,7 +163,7 @@ export default function ChatScreen() {
         .find(m => m.sender === 'bot');
         
       if (lastBotMessage) {
-        speakText(lastBotMessage.text);
+        speakText(lastBotMessage.message);
         setIsSpeaking(true);
       }
     }

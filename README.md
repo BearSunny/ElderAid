@@ -1,50 +1,86 @@
-# Welcome to your Expo app 👋
+# ElderAid
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+ElderAid is a React Native (Expo) mobile app designed to support elderly individuals — especially those with Alzheimer's — by providing personalized care, medication tracking, emotional support, emergency handling, and family connectivity. The app is currently under active development and is best run locally.
 
-## Get started
+---
 
-1. Install dependencies
+## Features
 
-   ```bash
-   npm install
-   ```
+### 1. Chatbot Companion
+- Text-based memory recall assistant
+- "Show me my son's wedding" style memory prompts
 
-2. Start the app
+### 2. Medication Management
+- Upload photo of prescriptions
+- Add & track medication schedules
+- Voice notification reminders using TTS
+- Mark medications as taken or not taken
+- Logs stored per user in Firestore
 
-   ```bash
-   npx expo start
-   ```
+### 3. Emergency Detection (Manual & Simulated)
+- Auto-call emergency number (e.g., 911, 112)
+- Alert family with:
+  - Timestamp
+  - GPS location
+  - Trigger type (manual/fall detection)
 
-In the output, you'll find options to open the app in a
+### 4. Family Notifications
+- Push notifications via Firebase Cloud Messaging
+- View last emergency, interaction, or medication taken
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### 5. Memory Lane
+- Image carousel: family photos & key memories
+- Audio playback of personalized voice messages
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### 6. Caregiver Dashboard (Family Side)
+- See real-time status of elder
+- Emergency and medication logs
+- Location tracking
+- Quick contact button
 
-## Get a fresh project
+---
 
-When you're ready, run:
+## Future endeavours
 
+### 1. Behavior Monitoring via Camera
+- Fall detection via pose estimation (MediaPipe/OpenCV)
+- Inactivity & wandering alerts
+- Emotion detection for distress (advanced feature)
+- Philips IP camera RTSP support (future)
+
+### 2. Privacy & Access Control
+- Toggle behavior monitoring ON/OFF
+- Local-only image/video processing (privacy-first)
+- Family access only via secure login
+
+### 3. Chatbot interaction
+- Future: voice-enabled interaction (Text-to-Speech + Speech-to-Text)
+
+---
+
+## Acknowledgments
+
+### Built with:
+- React Native
+- Expo
+- Firebase
+- Lucide Icons
+- OpenRouter API
+
+---
+
+## 📱 Getting Started
+
+### Prerequisites
+- [Node.js](https://nodejs.org/)
+- [Expo CLI](https://docs.expo.dev/get-started/installation/)
+- Firebase project (see setup below)
+
+### Installation
+
+1. Clone the repo
 ```bash
-npm run reset-project
-```
+git clone https://github.com/yourusername/elderaid.git
+cd demo
+npx expo start
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

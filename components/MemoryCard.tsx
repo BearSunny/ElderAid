@@ -22,7 +22,7 @@ export default function MemoryCard({ memory, onPress }: MemoryCardProps) {
     >
       <View style={styles.card}>
         <Image 
-          source={{ uri: memory.imageUri }} 
+          source={{ uri: memory.imageUrl }} 
           style={styles.image}
           resizeMode="cover" 
         />

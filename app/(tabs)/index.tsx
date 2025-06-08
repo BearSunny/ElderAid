@@ -28,9 +28,7 @@ export default function HomeScreen() {
     loadData();
     
     // Update the elder's status
-    updateElderStatus({
-      lastSeen: Date.now(),
-    });
+    updateElderStatus();
   }, []);
 
   const loadData = async () => {
@@ -105,9 +103,7 @@ export default function HomeScreen() {
   
   const makeEmergencyCall = (number: string) => {
     // Update status before making call
-    updateElderStatus({
-      lastSeen: Date.now(),
-    });
+    updateElderStatus();
     
     const phoneNumber = Platform.select({
       ios: `telprompt:${number}`,

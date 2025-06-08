@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { User, Mail, Lock, ArrowRight } from 'lucide-react-native';
 import Text from '@/components/typography/Text';
 import Button from '@/components/Button';
 import Colors from '@/constants/Colors';
 import Spacing from '@/constants/Spacing';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/utils/firebaseConfig';
+import { router } from 'expo-router';
 
 export default function SignupScreen() {
-  const router = useRouter();
-  const [name, setName] = useState('');
+  //const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSignup = () => {
-    // Implement signup logic here
-    router.push('/(tabs)');
+  const handleSignup = async () => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      router.replace('/(tabs)'); 
+    } catch (error: any) {
+      Alert.alert("Error signing you up!", error.message);
+    }
   };
 
   return (
@@ -30,17 +36,6 @@ export default function SignupScreen() {
           Sign up to get started
         </Text>
       </View>
-
-      <View style={styles.form}>
-        <View style={styles.inputContainer}>
-          <User size={20} color={Colors.gray[400]} style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Full Name"
-            value={name}
-            onChangeText={setName}
-          />
-        </View>
 
         <View style={styles.inputContainer}>
           <Mail size={20} color={Colors.gray[400]} style={styles.inputIcon} />
@@ -88,7 +83,6 @@ export default function SignupScreen() {
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
     </View>
   );
 }

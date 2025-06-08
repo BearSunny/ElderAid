@@ -21,7 +21,7 @@ import { FontSizes } from '@/constants/Fonts';
 import { EmergencyContact } from '@/types';
 import {
   getEmergencyContacts,
-  addEmergencyContact,
+  saveEmergencyContact,
   deleteEmergencyContact,
   getUserPreferences,
   saveUserPreferences,
@@ -85,7 +85,7 @@ export default function SettingsScreen() {
     };
 
     // Save contact
-    await addEmergencyContact(newContact);
+    await saveEmergencyContact(newContact);
     
     // Refresh list
     await loadData();
@@ -125,7 +125,7 @@ export default function SettingsScreen() {
 
   const handleSetPrimaryContact = async (contact: EmergencyContact) => {
     const updatedContact = { ...contact, isPrimary: true };
-    await addEmergencyContact(updatedContact);
+    await saveEmergencyContact(updatedContact);
     await loadData();
   };
 
